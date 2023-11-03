@@ -7,27 +7,27 @@ const Toolbox = () =>{
     const dispach = useDispatch();
     const activeMenuItem = useSelector((state)=>state.Menu.activeMenuItem)
     const showStrokToolOption = activeMenuItem === MENU_ITEMS.PENCIL;
-    const showBrushToolOption = activeMenuItem === MENU_ITEMS.ERASER;
+    const showBrushToolOption = activeMenuItem === MENU_ITEMS.PENCIL || activeMenuItem === MENU_ITEMS.ERASER
     
     const updateBrushSize = (event) =>{
         dispach(changeBrushSize({item:activeMenuItem,size:event.target.value}))
     }
     const updateColor = (color) =>{
-        dispach(changeBrushSize({item:activeMenuItem,color}))
+        dispach(changeColor({item:activeMenuItem,color}))
     }
 
     return (
         <div className={styles.toolboxContainer}>
-            {showStrokToolOption && <div className={styles.toolItem}>
+            {showStrokToolOption  && <div className={styles.toolItem}>
                 <h4 className={styles.toolText}>Stroke Color</h4>
                 <div className={styles.itemContainer}>
                     <div  className={styles.colorBox} style={{backgroundColor: COLORS.BLACK}} onClick={()=>updateColor(COLORS.BLACK)}/>
                     <div  className={styles.colorBox} style={{backgroundColor: COLORS.BLUE}} onClick={()=>updateColor(COLORS.BLACK)}/>
-                    <div  className={styles.colorBox} style={{backgroundColor: COLORS.GREEN}} onClick={()=>updateColor(COLORS.BLACK)}/>
-                    <div  className={styles.colorBox} style={{backgroundColor: COLORS.ORANGE}} onClick={()=>updateColor(COLORS.BLACK)}/>
-                    <div  className={styles.colorBox} style={{backgroundColor: COLORS.RED}} onClick={()=>updateColor(COLORS.BLACK)}/>
-                    <div  className={styles.colorBox} style={{backgroundColor: COLORS.WHITE}} onClick={()=>updateColor(COLORS.BLACK)}/>
-                    <div  className={styles.colorBox} style={{backgroundColor: COLORS.YELLOW}} onClick={()=>updateColor(COLORS.BLACK)}/>
+                    <div  className={styles.colorBox} style={{backgroundColor: COLORS.GREEN}} onClick={()=>updateColor(COLORS.GREEN)}/>
+                    <div  className={styles.colorBox} style={{backgroundColor: COLORS.ORANGE}} onClick={()=>updateColor(COLORS.ORANGE)}/>
+                    <div  className={styles.colorBox} style={{backgroundColor: COLORS.RED}} onClick={()=>updateColor(COLORS.RED)}/>
+                    <div  className={styles.colorBox} style={{backgroundColor: COLORS.WHITE}} onClick={()=>updateColor(COLORS.WHITE)}/>
+                    <div  className={styles.colorBox} style={{backgroundColor: COLORS.YELLOW}} onClick={()=>updateColor(COLORS.YELLOW)}/>
 
                 </div>
             </div>}
