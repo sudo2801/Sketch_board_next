@@ -1,30 +1,33 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import cx from "classnames"
 import { faPencil , faEraser , faRotateLeft ,faRotateRight, faFileArrowDown } from '@fortawesome/free-solid-svg-icons'
 import styles from "./index.module.css"
 import { MENU_ITEMS } from '@/constants'
 import { menuItemClick,actionItemMenu } from '@/slice/menuSlice'
+
 const Menu = ()  => {
-    const dispach = useDispatch()
+    const activeMenuItem = useSelector((state)=>state.Menu.activeMenuItem)
+    const dispach = useDispatch();
 
     const handleOnClickMenu = (item) =>{
         dispach(menuItemClick(item))
     }
     return (
         <div className={styles.menuContainer}>
-            <div  className={styles.iconWrapper} onClick={()=>handleOnClickMenu(MENU_ITEMS.PENCIL)} >
+            <div  className={cx(styles.iconWrapper,{[styles.active]:activeMenuItem === MENU_ITEMS.PENCIL})} onClick={()=>handleOnClickMenu(MENU_ITEMS.PENCIL)} >
             <FontAwesomeIcon icon={faPencil} className={styles.icon}  />
             </div>
-            <div className={styles.iconWrapper} onClick={()=>handleOnClickMenu(MENU_ITEMS.ERASER)}>
+            <div className={cx(styles.iconWrapper,{[styles.active]:activeMenuItem === MENU_ITEMS.ERASER})} onClick={()=>handleOnClickMenu(MENU_ITEMS.ERASER)}>
             <FontAwesomeIcon icon={faEraser}  className={styles.icon}   />
             </div>
-            <div className={styles.iconWrapper} onClick={()=>handleOnClickMenu(MENU_ITEMS.REDO)}>
+            <div className={cx(styles.iconWrapper,{[styles.active]:activeMenuItem === MENU_ITEMS.REDO})} onClick={()=>handleOnClickMenu(MENU_ITEMS.REDO)}>
             <FontAwesomeIcon icon={faRotateLeft}  className={styles.icon}   />
             </div>
-            <div className={styles.iconWrapper}>
+            <div className={cx(styles.iconWrapper,{[styles.active]:activeMenuItem === MENU_ITEMS.UNDO})}>
             <FontAwesomeIcon icon={faRotateRight}   className={styles.icon}  />
             </div >
-            <div className={styles.iconWrapper}>
+            <div className={cx(styles.iconWrapper,{[styles.active]:activeMenuItem === MENU_ITEMS.DOWNLOAD})}>
             <FontAwesomeIcon icon={faFileArrowDown}  className={styles.icon}   />
             </div>
         </div>
