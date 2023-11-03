@@ -1,6 +1,10 @@
 const { useRef, useEffect } = require("react")
+import { useDispatch, useSelector } from 'react-redux'
 
 const Board = () =>{
+    const activeMenuItem = useSelector((state)=>state.Menu.activeMenuItem)
+    const {color,size} = useSelector((state) => state.toolbox[activeMenuItem])
+ 
     const canvasRef = useRef(null)
     useEffect(()=>{
      if(!canvasRef.current) return
