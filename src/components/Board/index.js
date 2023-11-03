@@ -1,9 +1,12 @@
 const { useRef, useEffect, useLayoutEffect } = require("react");
+import { MENU_ITEMS } from "@/constants";
+import { actionItemMenu } from "@/slice/menuSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const Board = () => {
-  const activeMenuItem = useSelector((state) => state.Menu.activeMenuItem);
+  const {activeMenuItem,actionMenuItem} = useSelector((state) => state.Menu);
   const { color, size } = useSelector((state) => state.Toolbox[activeMenuItem]);
+  const dispach = useDispatch()
 
   const canvasRef = useRef(null);
   const shouldDraw = useRef(false)
@@ -20,6 +23,21 @@ const Board = () => {
 
     changeConfig();
   }, [ color, size]);
+
+  useEffect(()=>{
+    if (!canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+
+    if(actionMenuItem === MENU_ITEMS.DOWNLOAD){
+        const URL = canvas.toDataURL();
+        const anchor = document.createElement('a');
+        anchor.href = URL;
+        anchor.download = "MyPainting.jpg"
+        anchor.click()
+    }
+    dispach(actionItemMenu(null))
+  },[actionMenuItem])
 
   //// THIS IS BEFOR BROWSWE PAINT
   useLayoutEffect(() => {
