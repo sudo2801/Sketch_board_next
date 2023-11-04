@@ -1,8 +1,8 @@
 const { useRef, useEffect, useLayoutEffect } = require("react");
 import { MENU_ITEMS } from "@/constants";
 import { actionItemMenu } from "@/slice/menuSlice";
+import { socket } from "@/socket";
 import { useDispatch, useSelector } from "react-redux";
-
 const Board = () => {
   const { activeMenuItem, actionMenuItem } = useSelector((state) => state.Menu);
   const { color, size } = useSelector((state) => state.Toolbox[activeMenuItem]);
@@ -18,16 +18,24 @@ const Board = () => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
 
-    const changeConfig = () => {
+    const changeConfig = (color,size) => {
+      console.log(color,size)
       context.strokeStyle = color;
       context.lineWidth = size;
     };
+    const handleChangeConfig = (config) =>{
+      changeConfig(config.color,config.size)
+    }
 
-    changeConfig();
+    changeConfig(color,size);
+    socket.on('changeConfig',handleChangeConfig)
+
+    return ()=>{
+      socket.off('changeConfig',handleChangeConfig)
+    }
   }, [color, size]);
 
   useEffect(() => {
-    // debugger
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
@@ -75,28 +83,48 @@ const Board = () => {
     const handleMouseDown = (e) => {
       shouldDraw.current = true;
       beginPath(e.clientX, e.clientY);
+      socket.emit('beginPath',{x:e.clientX,y:e.clientY})
     };
 
     const handleMouseMove = (e) => {
       if (!shouldDraw.current) return;
       drawLiine(e.clientX, e.clientY);
+      socket.emit('drawLine',{x:e.clientX,y:e.clientY} )
+    
     };
+
     const handleMouseUp = (e) => {
-      debugger;
       shouldDraw.current = false;
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       drwaHistrory.current.push(imageData);
       historyPointer.current = drwaHistrory.current.length - 1;
     };
+    const handleBeginPath = (path) =>{
+      beginPath(path.x,path.y)
+    }
+
+    const handleDrawLine = (path) => {
+      drawLiine(path.x,path.y)
+    }
 
     canvas.addEventListener("mousedown", handleMouseDown);
     canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("mouseup", handleMouseUp);
+    
+    socket.on("beginPath",handleBeginPath)
+    socket.on("drawLine",handleDrawLine)
+
+    socket.on("connect", () => {
+        console.log("-------cline conneted----"); // x8WIv7-mJelg7on_ALbx
+      });
 
     return () => {
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseup", handleMouseUp);
+
+      socket.off("beginPath",handleBeginPath)
+      socket.off("drawLine",handleDrawLine)
     };
   }, []);
   return <canvas ref={canvasRef}></canvas>;

@@ -2,18 +2,22 @@ import { COLORS, MENU_ITEMS } from "@/constants"
 import styles from "./index.module.css"
 import { useDispatch, useSelector } from "react-redux"
 import {changeBrushSize,changeColor  } from '@/slice/toolboxSlice'
+import { socket } from "@/socket"
 
 const Toolbox = () =>{
     const dispach = useDispatch();
     const activeMenuItem = useSelector((state)=>state.Menu.activeMenuItem)
+    const {color,size} = useSelector((state)=>state.Toolbox[activeMenuItem])
     const showStrokToolOption = activeMenuItem === MENU_ITEMS.PENCIL;
     const showBrushToolOption = activeMenuItem === MENU_ITEMS.PENCIL || activeMenuItem === MENU_ITEMS.ERASER
     
     const updateBrushSize = (event) =>{
         dispach(changeBrushSize({item:activeMenuItem,size:event.target.value}))
+        socket.emit('changeConfig',{color,size:event.target.value})
     }
-    const updateColor = (color) =>{
-        dispach(changeColor({item:activeMenuItem,color}))
+    const updateColor = (newColor) =>{
+        dispach(changeColor({item:activeMenuItem,color:newColor}))
+        socket.emit('changeConfig',{color:newColor,size})
     }
 
     return (
